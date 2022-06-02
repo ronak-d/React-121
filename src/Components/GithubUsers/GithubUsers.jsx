@@ -18,7 +18,7 @@ function Github(){
     const [loading,setLoading]= useState(false);
     const [err,setErr] = useState(false);
     const [users,setUsers] = useState([]);
-    const [q,setq]  = useState("");
+    const [q,setq]  = useState("masai");
     const [page,setPage] = useState(1);
 
 
@@ -30,8 +30,8 @@ function Github(){
 
         GithubUsers("")
         .then((e) => {
-            console.log(e.data);
-            setData(e.data.items)
+            console.log(e.data.items);
+            setUsers(e.data.items)
             setLoading(false);
         })
         .catch((err) => {
@@ -41,7 +41,7 @@ function Github(){
     },[q,page]);
 
     // 
-    const handleseach = ()=>{
+    const handleseach = (q)=>{
         setLoading(true);
         setErr(false);
 
@@ -54,6 +54,7 @@ function Github(){
             setErr(true);
         });
     };
+        console.log(users)
 
     return (
         <>
@@ -80,10 +81,7 @@ function Github(){
             <button disabled = {page==1} onClick={()=>{setPage(page-1)}}> Prev</button>
             <button onClick={()=>{setPage(page+1)}}> Next</button>
         </div>
-        
         </>
-    )
-
-
-
+    )    
 }
+export default Github;
