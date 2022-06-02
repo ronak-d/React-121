@@ -31,7 +31,7 @@ function Github(){
         GithubUsers("")
         .then((e) => {
             console.log(e.data);
-            setData(e.data)
+            setData(e.data.items)
             setLoading(false);
         })
         .catch((err) => {
@@ -47,7 +47,7 @@ function Github(){
 
         GithubUsers(q)
         .then((e) => {
-            setUsers(e.data)
+            setUsers(e.data.items)
             setLoading(false);
         })
         .catch((err) => {
@@ -56,11 +56,32 @@ function Github(){
     };
 
     return (
+        <>
         <div id="search">
             <h1>Github Users</h1>
         </div>
+        <div>
+            <input value={q} onChange={(e) => setq(e.target.value)} />
 
+            <button disabled={loading} onClick={handleseach}>
+                {loading ? "loading" : "Search data"}
+            </button>
+        </div>
 
+        {err ? "PLease give some input": null}
+
+        <div>
+            {users?.map((item) =>(
+                <div key={item.id}>{item.login}</div>
+            ))}
+        </div>
+
+        <div>
+            <button disabled = {page==1} onClick={()=>{setPage(page-1)}}> Prev</button>
+            <button onClick={()=>{setPage(page+1)}}> Next</button>
+        </div>
+        
+        </>
     )
 
 
