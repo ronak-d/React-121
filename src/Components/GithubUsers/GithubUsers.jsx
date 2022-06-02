@@ -1,87 +1,85 @@
-import {axios} from "axios";
-import {useState,useEffect} from "react";
+import axios from "axios";
 
+const { useState, useEffect } = require("react");
 
-// getting req from github and updating pagination.
-const GithubUsers = (q,page) =>{
-    return axios("https://api.github.com/users",{
-    method :"GET",
-    params : {
-        q:q,
-        per_page:5,
-        page, 
+const getGithubUsers = (q, page) => {
+  return axios("https://api.github.com/search/users", {
+    method: "GET",
+    params: {
+      q,
+      per_page: 5,
+      page
     }
   });
+};
+
+function Github() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [query, setQuery] = useState("react");
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setLoading(true);
+    getGithubUsers(query, page)
+      .then((res) => {
+        setLoading(false);
+        setData(res.data);
+        setError(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(true);
+        console.log(err);
+      });
+  }, [query, page]);
+
+  const handleClick = (query) => setQuery(query);
+
+  console.log(data);
+  console.log(query);
+  return (
+    <div>
+      <h2>Github Users</h2>
+      {loading && <div>...loading</div>}
+      {error && <div>...error</div>}
+      
+      <SearchBox handleClick={handleClick} />
+      
+      {data?.items?.map((item) => (
+        <GithubCard key={item.id} {...item} />
+      ))}
+      <div>
+        <button disabled={page === 1} onClick={() => setPage(page - 1)}> PRV</button>
+        <button onClick={() => setPage(page + 1)}>NEXT</button>
+      </div>
+    </div>
+  );
 }
 
-function Github(){
-    const [loading,setLoading]= useState(false);
-    const [err,setErr] = useState(false);
-    const [users,setUsers] = useState([]);
-    const [q,setq]  = useState("masai");
-    const [page,setPage] = useState(1);
+const SearchBox = ({ handleClick }) => {
+  const [text, setText] = useState("");
+  return (
+    <div>
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button onClick={() => handleClick(text)}> SEARCH </button>
+    </div>
+  );
+};
+
+const GithubCard = ({ avatar_url, login }) => {
+  return (
+    <div>
+      <img src={avatar_url} width="50px" alt={login} />
+      <div>{login}</div>
+    </div>
+  );
+};
 
 
-    // useffect run when any query or page updates
-    useEffect (() => {
-        // function fetching from api q:masi by default;
-        setLoading(true);
-        setErr(false);
-
-        GithubUsers("")
-        .then((e) => {
-            console.log(e.data.items);
-            setUsers(e.data.items)
-            setLoading(false);
-        })
-        .catch((err) => {
-            setErr(true);
-            setLoading(false);
-        })
-    },[q,page]);
-
-    // 
-    const handleseach = (q)=>{
-        setLoading(true);
-        setErr(falseJ);
-
-        GithubUsers(q)
-        .then((e) => {
-            setUsers(e.data.items)
-            setLoading(false);
-        })
-        .catch((err) => {
-            setErr(true);
-        });
-    };
-        console.log(users)
-
-    return (
-        <>
-        <div id="search">
-            <h1>Github Users</h1>
-        </div>
-        <div>
-            <input value={q} onChange={(e) => setq(e.target.value)} />
-
-            <button disabled={loading} onClick={handleseach}>
-                {loading ? "loading" : "Search data"}
-            </button>
-        </div>
-
-        {err ? "PLease give some input": null}
-
-        <div>
-            {users?.map((item) =>(
-                <div key={item.id}>{item.login}</div>
-            ))}
-        </div>
-
-        <div>
-            <button disabled = {page==1} onClick={()=>{setPage(page-1)}}> Prev</button>
-            <button onClick={()=>{setPage(page+1)}}> Next</button>
-        </div>
-        </>
-    )    
-}
 export default Github;
