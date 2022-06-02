@@ -43,7 +43,7 @@ function Github(){
     // 
     const handleseach = (q)=>{
         setLoading(true);
-        setErr(false);
+        setErr(falseJ);
 
         GithubUsers(q)
         .then((e) => {
