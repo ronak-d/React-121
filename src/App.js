@@ -9,7 +9,7 @@ function App() {
 
     {/* <Restro /> */}
     {/* <Timer /> */}
-    <Github />
+    {/* <Github /> */}
 
   </div>
   )
